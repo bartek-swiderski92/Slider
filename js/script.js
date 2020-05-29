@@ -13,7 +13,7 @@ class Slider {
   }
   generateSlider() {
     //pobieramy element który zamieniamy na slider
-    this.slider = document.querySelector(this.slideSelector);
+    this.slider = document.querySelector(this.sliderSelector);
     this.slider.classList.add("slider");
 
     //tworzymy kontener dla slajdów
@@ -37,5 +37,68 @@ class Slider {
 
     //wygenerowaliśmy kontener ze slajdami, wstawimy go więc do slidera
     this.slider.appendChild(slidesCnt);
+
+    this.createPrevNext();
+    this.createDots();
   }
+
+
+
+  createPrevNext() {
+    this.prev = document.createElement("button");
+    this.prev.type = "button";
+    this.prev.innerText = "Poprzedni slide";
+    this.prev.classList.add("slider-button");
+    this.prev.classList.add("slider-button-prev");
+    this.prev.addEventListener("click", this.slidePrev.bind(this));
+
+    this.next = document.createElement("button");
+    this.next.type = "button";
+    this.next.innerText = "Następny slide";
+    this.next.classList.add("slider-button");
+    this.next.classList.add("slider-button-next");
+    this.next.addEventListener("click", this.slideNext.bind(this));
+
+    const nav = document.createElement("div");
+    nav.classList.add("slider-nav");
+    nav.setAttribute("aria-label", "Slider prev next");
+    nav.appendChild(this.prev);
+    nav.appendChild(this.next);
+    this.slider.appendChild(nav);
+  }
+
+  createDots() {
+    const ulDots = document.createElement("ul");
+    ulDots.classList.add("slider-dots");
+    ulDots.setAttribute("aria-label", "Slider pagination");
+
+    //towrzymy pętle w ilości slajdów
+    for (let i = 0; i<this.slides.length; i++) {
+      /*każdorazowo tworzymy LI wraz z buttonem
+      każdy button po kliknięciu zmieni slajd
+      za pomocą metody changeSlide()*/
+
+      const li = document.createElement("li");
+      li.classList.add("slider-dots-element");
+
+      const btn = document.createElement("button");
+      btn.classList.add("slider-dots-button");
+      btn.type = "button";
+      btn.innerText = i + 1;
+      btn.setAttribute("aria-label", "Set slide "+ ( 1 + 1));
+
+      btn.addEventListener("click", () => this.changeSlide(i));
+
+      li.appendChild(btn);
+
+      ulDots.appendChild(li);
+
+      /*wygenerowany przycisk wrzucamy do wspólnej tablicy
+      dzięki temu potem łatwiej będzie nam sie do tych kropek odwoływać */
+
+      this.dots.push(li);
+    }
+    this.slider.appnedChild(ulDots);
+  }
+
 }
