@@ -1,10 +1,13 @@
 class Slider {
     constructor(elemSelector, opts) {
       const defaultOpts = {
-        pauseTime : 0,
-        prevText : "Next slide",
-        nextText : "Previous slide"
+        pauseTime : 5000,
+        generateDots : true,
+        generatePrevNext : true,
+        prevText : "Poprzedni",
+        nextText : "Następny"
       };
+        this.options = Object.assign({}, defaultOpts, opts)
         this.sliderSelector = elemSelector;
         this.currentSlide = 0; //aktualny slide
         this.time = null; //tutaj będziemy podczepiać setTimeout
@@ -41,8 +44,8 @@ class Slider {
         this.slides = slidesCnt.querySelectorAll('.slider-slide');
         this.slider.appendChild(slidesCnt);
 
-        this.createPrevNext();
-        this.createDots();
+        if (this.options.generateDots) this.createPrevNext();
+        if (this.options.generatePrevNext) this.createDots();
     }
 
     slidePrev() {
@@ -63,38 +66,40 @@ class Slider {
 
     changeSlide(index) {
         this.slides.forEach(slide => {
-            slide.classList.remove('slider-slide-active');
-            slide.setAttribute('aria-hidden', true);
+            slide.classList.remove("slider-slide-active");
+            slide.setAttribute("aria-hidden", true);
         });
 
-        //dodajemy ją tylko wybranemu
-        this.slides[index].classList.add('slider-slide-active');
-        this.slides[index].setAttribute('aria-hidden', false);
+        this.slides[index].classList.add("slider-slide-active");
+        this.slides[index].setAttribute("aria-hidden", false);
 
-        //podobny manewr robimy dla kropek
-        this.dots.forEach(dot => dot.classList.remove('slider-dots-element-active'));
-        this.dots[index].classList.add('slider-dots-element-active');
+        if (this.options.generateDots) {
+            this.dots.forEach(function(dot) {
+                dot.classList.remove("slider-dots-element-active");
+            });
+            this.dots[index].classList.add("slider-dots-element-active");
+        }
 
-        //aktualny slide przestawiamy na wybrany
         this.currentSlide = index;
 
-        if (tupeof this.option.pauseTime === "number" && this.options.PauseTime !== 0){
-          clearInterval(this.time);
-          this.time = setTimeout(() => this.slideNext(), this.options.pauseTime);
-    };
-  }
+        if (typeof this.options.pauseTime === "number" && this.options.pauseTime !== 0) {
+            clearInterval(this.time);
+            this.time = setTimeout(() => this.slideNext(), this.options.pauseTime);
+        }
+    }
+
 
     createPrevNext() {
         this.prev = document.createElement('button');
         this.prev.type = "button";
-        this.prev.innerText = "this.options.prevText";
+        this.prev.innerText = this.options.prevText;
         this.prev.classList.add('slider-button');
         this.prev.classList.add('slider-button-prev');
         this.prev.addEventListener('click', this.slidePrev.bind(this));
 
         this.next = document.createElement('button');
         this.next.type = "button";
-        this.next.innerText = "Następny slide";
+        this.next.innerText = this.options.nextText;
         this.next.classList.add('slider-button');
         this.next.classList.add('slider-button-next');
         this.next.addEventListener('click', this.slideNext.bind(this));
@@ -138,5 +143,6 @@ class Slider {
         this.slider.appendChild(ulDots);
     }
 }
+
 
 const slide = new Slider('#slider1');
